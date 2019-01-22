@@ -9,5 +9,7 @@ namespace Earbook.Models.Options
     public class Storage
     {
         public string Path { get; set; }
+        public long MaxLength { get; set; }
+        public List<string> SupportedExtensions { get; } = new List<string>();
     }
 }

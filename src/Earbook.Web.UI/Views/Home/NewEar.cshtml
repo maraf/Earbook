@@ -1,10 +1,16 @@
 ﻿@{
     ViewData["Title"] = "Nové ouško";
 }
-
 <div class="row">
     <div class="col"></div>
-    <div class="col-5">
+    <div class="col-7">
+        @if (ViewData["Message"] != null)
+        {
+            <div class="alert alert-@(ViewData["MessageType"] ?? "primary")" role="alert">
+                @ViewData["Message"]
+            </div>
+        }
+
         <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Jméno majitele</label>

@@ -32,9 +32,22 @@ namespace Earbook.Controllers
 
             await repository.EnsureAccountAsync(username);
             await repository.SaveChangesAsync();
-            await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, username) }, CookieAuthenticationDefaults.AuthenticationScheme)));
+            await HttpContext.SignInAsync(CreatePrincipal(username));
 
             return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+
+        private static ClaimsPrincipal CreatePrincipal(string username)
+        {
+            return new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new Claim[]
+                    {
+                        new Claim(ClaimTypes.Name, username)
+                    },
+                    CookieAuthenticationDefaults.AuthenticationScheme
+                )
+            );
         }
     }
 }
