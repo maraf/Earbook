@@ -3,13 +3,8 @@
 }
 <div class="row">
     <div class="col"></div>
-    <div class="col-7">
-        @if (ViewData["Message"] != null)
-        {
-            <div class="alert alert-@(ViewData["MessageType"] ?? "primary")" role="alert">
-                @ViewData["Message"]
-            </div>
-        }
+    <div class="col-lg-7">
+        <partial name="_Message" />
 
         <form method="post" enctype="multipart/form-data">
             <div class="form-group">

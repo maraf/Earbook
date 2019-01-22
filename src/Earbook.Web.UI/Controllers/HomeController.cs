@@ -14,6 +14,7 @@ using Earbook.Models.Options;
 using System.IO;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Earbook.ViewModels;
 
 namespace Earbook.Controllers
 {
@@ -36,7 +37,7 @@ namespace Earbook.Controllers
             QuizModel model = await repository.EnsurePendingQuizAsync(User.Identity.Name);
             await repository.SaveChangesAsync();
 
-            return View(model);
+            return View(new IndexViewModel(model, new StatsViewModel(await repository.GetPlayerStatsAsync(User.Identity.Name))));
         }
 
         [HttpPost]
@@ -49,6 +50,12 @@ namespace Earbook.Controllers
                 if (model != null)
                 {
                     model.IsSuccess = model.Answer.Id == answer;
+
+                    if (model.IsSuccess.Value)
+                        ShowMessage("Ano, to je správně!");
+                    else
+                        ShowMessage("Bohužel, špatná odpověď.", "danger");
+
                     await repository.SaveChangesAsync();
                 }
             }
@@ -75,17 +82,13 @@ namespace Earbook.Controllers
             string fileExtension = Path.GetExtension(picture.FileName);
             if (picture.Length > storage.MaxLength || !storage.SupportedExtensions.Contains(fileExtension))
             {
-                ViewData["Message"] = "Nahraný soubor neodpovídá normám.";
-                ViewData["MessageType"] = "danger";
-
+                ShowMessage("Nahraný soubor neodpovídá normám.", "danger");
                 return View();
             }
 
             if (await repository.IsExistingEarAsync(name))
             {
-                ViewData["Message"] = "Bohužel takto pojmenované ouško již máme.";
-                ViewData["MessageType"] = "danger";
-
+                ShowMessage("Bohužel takto pojmenované ouško již máme.", "danger");
                 return View();
             }
 
@@ -104,6 +107,12 @@ namespace Earbook.Controllers
             ViewData["Message"] = "Nové ouško úspěšně nahráno!";
             ViewData["MessageType"] = "success";
             return View();
+        }
+
+        private void ShowMessage(string text, string type = null)
+        {
+            ViewData["Message"] = text;
+            ViewData["MessageType"] = type;
         }
 
         [HttpGet("ear-picture/{filename}")]

@@ -1,0 +1,6 @@
+﻿@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-@(ViewData["MessageType"] ?? "primary")" role="alert">
+        @ViewData["Message"]
+    </div>
+}

@@ -41,6 +41,13 @@ namespace Earbook.Models.Repositories
         public DbSet<EarModel> Ears { get; private set; }
         public DbSet<QuizModel> Quizzes { get; private set; }
 
+        public async Task<(int trueCount, int falseCount)> GetPlayerStatsAsync(string username)
+        {
+            int trueCount = await Quizzes.CountAsync(q => q.Player.Username == username && q.IsSuccess == true);
+            int falseCount = await Quizzes.CountAsync(q => q.Player.Username == username && q.IsSuccess == false);
+            return (trueCount, falseCount);
+        }
+
         public async Task EnsureAccountAsync(string username)
         {
             if (await Accounts.AnyAsync(a => a.Username == username))

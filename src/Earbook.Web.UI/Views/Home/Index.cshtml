@@ -1,31 +1,49 @@
-﻿@model QuizModel
+﻿@model IndexViewModel
 @{
     ViewData["Title"] = "Ušní kvíz";
 }
 
-@if (Model == null)
-{
-    <div class="text-center">
-        <h1 class="display-4">Nemáme dostatek uší.</h1>
-        <p>Bohužel nemáme dostatek uší, aby jsme vám mohli zobrazit kvíz. Zkuste prosím rozšířit naši ušní databázi a pomoci tak i ostatním.</p>
-    </div>
-}
-else
-{
-    <div class="row">
-        <div class="col"></div>
-        <div class="col-lg-7">
+<div class="row">
+    <div class="col"></div>
+    <div class="col-lg-7" style="margin-top: 20px;">
+        <partial name="_Message" />
+
+        @if (Model.Quiz == null)
+        {
+            <h1 class="display-4">Nemáme dostatek uší.</h1>
+            <p>Bohužel nemáme dostatek uší, aby jsme vám mohli zobrazit kvíz. Zkuste prosím rozšířit naši ušní databázi a pomoci tak i ostatním.</p>
+        }
+        else
+        {
             <h1>Komu pak patří toto krásné ouško?</h1>
 
-            <img src="@Url.Action("EarPicture", new { filename = Model.Answer.FileName })" style="width: 100%; margin-bottom: 10px;" />
+            <img src="@Url.Action("EarPicture", new { filename = Model.Quiz.Answer.FileName })" style="width: 100%; margin-bottom: 10px;" />
 
             <form method="post">
-                @foreach (var option in Model.Options)
+                @foreach (var option in Model.Quiz.Options)
                 {
                     <button type="submit" class="btn btn-primary btn-block" name="answer" value="@option.Option.Id">@option.Option.Name</button>
                 }
             </form>
+        }
+
+        <h1 style="margin-top: 30px;">Jak jsi na tom?</h1>
+
+        @{
+            var truePercentage = (int)((double)Model.Stats.TrueCount / (Model.Stats.TrueCount + Model.Stats.FalseCount) * 100);
+            var falsePercentage = 100 - truePercentage;
+        }
+
+        <div class="progress" style="height: 30px;">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: @truePercentage%"></div>
+            <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: @falsePercentage%"></div>
         </div>
-        <div class="col"></div>
+        <p class="float-left">
+            <strong>@Model.Stats.TrueCount</strong> správných odpovědí.
+        </p>
+        <p class="float-right">
+            <strong>@Model.Stats.FalseCount</strong> špatných odpovědí.
+        </p>
     </div>
-}
+    <div class="col"></div>
+</div>
