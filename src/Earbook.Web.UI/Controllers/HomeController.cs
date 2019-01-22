@@ -13,6 +13,7 @@ using Earbook.Models.Repositories;
 using Earbook.Models.Options;
 using System.IO;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Earbook.Controllers
 {
@@ -30,9 +31,29 @@ namespace Earbook.Controllers
             this.repository = repository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            QuizModel model = await repository.EnsurePendingQuizAsync(User.Identity.Name);
+            await repository.SaveChangesAsync();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(Guid answer)
+        {
+            if (answer != Guid.Empty)
+            {
+                QuizModel model = await repository.FindPendingQuizAsync(User.Identity.Name);
+                if (model != null)
+                {
+                    model.IsSuccess = model.Answer.Id == answer;
+                    await repository.SaveChangesAsync();
+                }
+            }
+
+            return await Index();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -83,6 +104,15 @@ namespace Earbook.Controllers
             ViewData["Message"] = "Nové ouško úspěšně nahráno!";
             ViewData["MessageType"] = "success";
             return View();
+        }
+
+        [HttpGet("ear-picture/{filename}")]
+        public async Task<IActionResult> EarPicture(string filename)
+        {
+            if (await repository.Ears.AnyAsync(e => e.FileName == filename))
+                return File(System.IO.File.OpenRead(Path.Combine(storage.Path, filename)), "image/jpg");
+
+            return NotFound();
         }
     }
 }
