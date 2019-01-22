@@ -3,19 +3,20 @@
 }
 <div class="row">
     <div class="col"></div>
-    <div class="col-lg-7">
+    <div class="col-lg-7" style="margin-top: 20px;">
         <partial name="_Message" />
 
+        <h1>Nové ouško</h1>
         <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Jméno majitele</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Jméno majitele" autofocus>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Komu tento exemplář patří?" autofocus>
             </div>
             <div class="form-group">
                 <label for="picture">Obrázek</label>
-                <input type="file" class="form-control" id="picture" name="picture">
+                <input type="file" class="form-control-file" id="picture" name="picture">
             </div>
-            <button type="submit" class="btn btn-primary">Nahrát</button>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 40px;">Nahrát</button>
         </form>
     </div>
     <div class="col"></div>
