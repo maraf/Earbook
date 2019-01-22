@@ -69,14 +69,15 @@ namespace Earbook.Controllers
             }
 
             AccountModel owner = await repository.FindAccountAsync(User.Identity.Name);
+            Guid earId = await repository.AddEarAsync(owner, name);
 
-            string fileName = Guid.NewGuid().ToString() + fileExtension;
+            string fileName = earId.ToString() + fileExtension;
             string filePath = Path.Combine(storage.Path, fileName);
             using (Stream fileContent = new FileStream(filePath, FileMode.OpenOrCreate))
             using (Stream content = picture.OpenReadStream())
                 await content.CopyToAsync(fileContent);
 
-            await repository.AddEarAsync(owner, name, fileName);
+            await repository.SetEarFileNameAsync(earId, fileName);
             await repository.SaveChangesAsync();
 
             ViewData["Message"] = "Nové ouško úspěšně nahráno!";

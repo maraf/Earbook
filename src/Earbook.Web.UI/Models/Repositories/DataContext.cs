@@ -28,21 +28,27 @@ namespace Earbook.Models.Repositories
         public Task<AccountModel> FindAccountAsync(string username)
             => Accounts.FirstOrDefaultAsync(a => a.Username == username);
 
-        public async Task AddEarAsync(AccountModel owner, string name, string fileName)
+        public async Task<Guid> AddEarAsync(AccountModel owner, string name)
         {
             Ensure.NotNull(owner, "owner");
             Ensure.NotNullOrEmpty(name, "name");
-            Ensure.NotNullOrEmpty(fileName, "fileName");
 
-            await Ears.AddAsync(new EarModel()
+            var result = await Ears.AddAsync(new EarModel()
             {
                 Owner = owner,
-                Name = name,
-                FileName = fileName
+                Name = name
             });
+
+            return result.Entity.Id;
         }
 
         public Task<bool> IsExistingEarAsync(string name)
             => Ears.AnyAsync(e => e.Name == name);
+
+        public async Task SetEarFileNameAsync(Guid earId, string fileName)
+        {
+            EarModel entity = await Ears.FindAsync(earId);
+            entity.FileName = fileName;
+        }
     }
 }

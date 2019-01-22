@@ -10,7 +10,7 @@ namespace Earbook.Models
     public class EarModel
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public AccountModel Owner { get; set; }
 
