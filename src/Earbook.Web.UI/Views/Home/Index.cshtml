@@ -15,7 +15,7 @@
         }
         else
         {
-            <h1>Komu pak patří toto krásné ouško?</h1>
+            <h1>Komupak patří toto krásné ouško?</h1>
 
             <img src="@Url.Action("EarPicture", new { filename = Model.Quiz.Answer.FileName })" style="width: 100%; margin-bottom: 10px;" />
 
@@ -30,8 +30,15 @@
         <h1 style="margin-top: 30px;">Jak jsi na tom?</h1>
 
         @{
-            var truePercentage = (int)((double)Model.Stats.TrueCount / (Model.Stats.TrueCount + Model.Stats.FalseCount) * 100);
-            var falsePercentage = 100 - truePercentage;
+            var totalCount = Model.Stats.TrueCount + Model.Stats.FalseCount;
+            var truePercentage = 0;
+            var falsePercentage = 0;
+
+            if (totalCount > 0)
+            {
+                truePercentage = (int)((double)Model.Stats.TrueCount / totalCount * 100);
+                falsePercentage = 100 - truePercentage;
+            }
         }
 
         <div class="progress" style="height: 30px;">
