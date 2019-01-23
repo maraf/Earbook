@@ -1,0 +1,27 @@
+﻿@model List<AccountRankingModel>
+
+<div class="row">
+    <div class="col"></div>
+    <div class="col-lg-7">
+        <h1 style="margin: 20px 0;">Jak to jde ostatním?</h1>
+
+        <table class="table table-borderless">
+            <tbody>
+                @{
+                    int number = 1;
+                }
+
+                @foreach (var item in Model)
+                {
+                    <tr style="@(item.Player.Username == User.Identity.Name ? "font-weight: bold;" : String.Empty)">
+                        <td>@(number++)</td>
+                        <td>@item.Player.Username</td>
+                        <td>@item.TrueCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+    <div class="col"></div>
+</div>

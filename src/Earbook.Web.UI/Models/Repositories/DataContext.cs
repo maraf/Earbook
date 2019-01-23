@@ -113,5 +113,30 @@ namespace Earbook.Models.Repositories
 
         private Task<List<EarModel>> GetRandomOptionsAsync()
             => Ears.OrderBy(o => Guid.NewGuid()).Take(5).ToListAsync();
+
+        public async Task<List<AccountRankingModel>> GetTop5Async()
+        {
+            List<AccountRankingModel> result = new List<AccountRankingModel>();
+
+            //var data = await Quizzes.GroupBy(q => q.Player).SumAsync(p => new { TrueCount = p.Count(q => q.IsSuccess == true), FalseCount = p.Count(q => q.IsSuccess == false) });
+            var data = await Quizzes
+                .GroupBy(q => q.Player)
+                .Select(p => new { Player = p.Key, TrueCount = p.Count(q => q.IsSuccess == true), FalseCount = p.Count(q => q.IsSuccess == false) })
+                .OrderByDescending(p => p.TrueCount)
+                .Take(5)
+                .ToListAsync();
+
+            foreach (var player in data)
+            {
+                result.Add(new AccountRankingModel()
+                {
+                    Player = player.Player,
+                    TrueCount = player.TrueCount,
+                    FalseCount = player.FalseCount
+                });
+            }
+
+            return result;
+        }
     }
 }

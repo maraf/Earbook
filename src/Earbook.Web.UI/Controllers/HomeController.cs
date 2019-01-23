@@ -123,5 +123,11 @@ namespace Earbook.Controllers
 
             return NotFound();
         }
+
+        [HttpGet("nejlepsich-5")]
+        public async Task<IActionResult> Top5()
+        {
+            return View(await repository.GetTop5Async());
+        }
     }
 }
